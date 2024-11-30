@@ -5,9 +5,6 @@ from datetime import time
 from tkinter.ttk import Button, Label
 from tkcalendar import DateEntry
 
-
-
-
 class Usuario:
     def __init__(self, id, nombre, email):
         self.id = id
@@ -204,6 +201,24 @@ class VistaRegistro(tk.Frame):
         messagebox.showinfo("Éxito", f"{tipo_usuario} registrado exitosamente")
         self.app.mostrar_vista(VistaPrincipal, self.app)
 
+class VistaVerHorarios(tk.Frame):
+    def __init__(self, parent, app):
+        super().__init__(parent)
+        self.app = app
+
+        tk.Label(self, text="Horarios Disponibles de los Profesores", font=("Arial", 16)).pack(pady=10)
+
+        for usuario in self.app.usuarios.values():
+            if isinstance(usuario["objeto"], Profesor):
+                profesor = usuario["objeto"]
+                tk.Label(self, text=f"Profesor: {profesor.nombre}", font=("Arial", 12)).pack(pady=5)
+
+                for horario in profesor.horarios_disponibles:
+                    tk.Label(self, text=horario.strftime("%H:%M")).pack()
+
+        tk.Button(self, text="Regresar", command=lambda: app.mostrar_vista(VistaAlumno, app, self.app.usuario_actual)).pack(pady=10)
+        self.pack()
+
 class VistaAlumno(tk.Frame):
     def __init__(self, parent, app, estudiante):
         super().__init__(parent)
@@ -214,6 +229,7 @@ class VistaAlumno(tk.Frame):
 
         tk.Button(self, text="Realizar Solicitud", command=lambda: app.mostrar_vista(VistaRealizarSolicitud, app, estudiante)).pack(pady=5)
         tk.Button(self, text="Ver Solicitudes", command=lambda: app.mostrar_vista(VistaVerSolicitudes, app, estudiante)).pack(pady=5)
+        tk.Button(self, text="Ver Horarios Disponibles", command=lambda: app.mostrar_vista(VistaVerHorarios, app)).pack(pady=5)
         tk.Button(self, text="Cerrar Sesión", command=lambda: app.mostrar_vista(VistaPrincipal, app)).pack(pady=10)
         self.pack()
 
